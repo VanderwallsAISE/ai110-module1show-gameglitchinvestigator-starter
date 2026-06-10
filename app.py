@@ -86,14 +86,14 @@ attempt_limit = attempt_limit_map[difficulty]
 
 low, high = get_range_for_difficulty(difficulty)
 
-st.sidebar.caption(f"Range: {low} to {high}")
+st.sidebar.caption(f"Range: {low} to {high}")  #fixed to show correct range based on difficulty
 st.sidebar.caption(f"Attempts allowed: {attempt_limit}")
 
 if "secret" not in st.session_state:
     st.session_state.secret = random.randint(low, high)
 
 if "attempts" not in st.session_state:
-    st.session_state.attempts = 1
+    st.session_state.attempts = 0         # FIXME: attempts should start at 0 before the first guess
 
 if "score" not in st.session_state:
     st.session_state.score = 0
@@ -108,7 +108,7 @@ st.subheader("Make a guess")
 
 st.info(
     f"Guess a number between {low} and {high}. "
-    f"Attempts left: {attempt_limit - st.session_state.attempts}"
+    f"Attempts left: {attempt_limit - st.session_state.attempts}"  # FIXME: should show correct attempts left based on attempt_limit and attempts
 )
 
 with st.expander("Developer Debug Info"):

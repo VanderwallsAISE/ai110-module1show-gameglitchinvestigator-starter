@@ -90,10 +90,10 @@ st.sidebar.caption(f"Range: {low} to {high}")  #fixed to show correct range base
 st.sidebar.caption(f"Attempts allowed: {attempt_limit}")
 
 if "secret" not in st.session_state:
-    st.session_state.secret = random.randint(low, high)
+    st.session_state.secret = random.randint(low, high) # FIXME: secret should be generated based on the selected difficulty range, but it was always generating between 1 and 100 regardless of difficulty.
 
 if "attempts" not in st.session_state:
-    st.session_state.attempts = 0         # FIXME: attempts should start at 0 before the first guess
+    st.session_state.attempts = 0         # FIXME: attempts should start at 0 before the first guess.   It was starting at 1 which caused the first guess to be counted as an attempt before it was made.
 
 if "score" not in st.session_state:
     st.session_state.score = 0
@@ -133,11 +133,11 @@ with col3:
 
 if new_game:
     st.session_state.attempts = 0
-    st.session_state.secret = random.randint(low, high) # FIXME: new secret should be generated based on the selected difficulty range
-    st.session_state.score = 0
-    st.session_state.status = "playing"
-    st.session_state.history = []
-    st.success("New game started.")
+    st.session_state.secret = random.randint(low, high)  # FIXME: new secret should be generated based on the selected difficulty range
+    st.session_state.score = 0                           # FIXME: score should reset to 0 when starting a new game
+    st.session_state.status = "playing"                  # FIXME: status should reset to "playing" when starting a new game
+    st.session_state.history = []                        # FIXME: history should reset when starting a new game
+    st.success("New game started.")    
     st.rerun()
 
 if st.session_state.status != "playing":
@@ -148,14 +148,12 @@ if st.session_state.status != "playing":
     st.stop()
 
 if submit:
-    st.session_state.attempts += 1
-
+    
     ok, guess_int, err = parse_guess(raw_guess)
-
     if not ok:
-        st.session_state.history.append(raw_guess)
         st.error(err)
     else:
+        st.session_state.attempts += 1
         st.session_state.history.append(guess_int)
 
         if st.session_state.attempts % 2 == 0:

@@ -25,9 +25,24 @@ It wrote the code, ran away, and now the game is unplayable.
 
 ## 📝 Document Your Experience
 
-- [x] Describe the game's purpose.
-- [x] Detail which bugs you found.
-- [x] Explain what fixes you applied.
+### Game Purpose
+
+The purpose of this project is to create a number guessing game where the player must guess a secret number within a limited number of attempts. The application uses Streamlit for the user interface and stores game state using session_state.
+
+### Bugs Found
+
+During testing, I discovered several issues:
+- Hard difficulty used a smaller range than Normal difficulty.
+- The displayed range did not update when difficulty changed.
+- Hint messages were reversed and gave the wrong direction.
+- The secret number could be treated as a string, causing comparison issues.
+- Invalid guesses could affect game behavior.
+- The New Game button did not fully reset all game state values.
+
+### Fixes Applied
+
+To fix these issues, I moved core game logic into `logic_utils.py`, corrected the difficulty ranges, fixed the hint directions, ensured numeric comparisons were used consistently, added input validation, improved state reset behavior, and created automated pytest tests to verify the fixes. I also added edge-case tests and enhanced the user interface with metrics, feedback messages, and guess history.
+
 ## 📸 Demo Walkthrough
 
 Describe your fixed game in numbered steps so a reader can follow along without watching a video:

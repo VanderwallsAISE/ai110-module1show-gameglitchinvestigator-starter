@@ -11,6 +11,11 @@ unpack/inspect both halves. (The original starter tests asserted against a bare
 string, which no longer matches the function's return value.)
 """
 
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
 from logic_utils import (
     get_range_for_difficulty,
     parse_guess,

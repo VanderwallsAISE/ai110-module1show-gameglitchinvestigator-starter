@@ -1,0 +1,49 @@
+%% Game Glitch Investigator — project architecture
+%% Render at https://mermaid.live or with the Mermaid CLI.
+flowchart TD
+    User["👤 User<br/>(plays in the browser)"]
+
+    subgraph UI["UI / State Layer"]
+        App["app.py<br/>Streamlit UI + session_state<br/>(secret, attempts, score, status, history)"]
+    end
+
+    subgraph Logic["Game Logic Layer"]
+        LogicUtils["logic_utils.py<br/>get_range_for_difficulty · parse_guess<br/>validate_in_range · check_guess · update_score"]
+    end
+
+    subgraph Verify["Verification Layer"]
+        Tests["tests/test_game_logic.py<br/>pytest suite"]
+    end
+
+    subgraph Docs["Documentation"]
+        Readme["README.md<br/>setup · walkthrough · stretch features"]
+        Reflection["reflection.md<br/>process notes"]
+    end
+
+    %% Runtime interaction
+    User -->|"enters a guess / clicks buttons"| App
+    App -->|"renders feedback, metrics, history"| User
+
+    %% UI calls into pure game logic
+    App -->|"calls pure functions"| LogicUtils
+    LogicUtils -->|"returns outcomes / validated values"| App
+
+    %% Tests verify the logic layer directly
+    Tests -->|"imports & asserts"| LogicUtils
+
+    %% Documentation describes the system
+    Readme -.->|"documents"| App
+    Readme -.->|"documents"| LogicUtils
+    Readme -.->|"reports results of"| Tests
+    Reflection -.->|"reflects on"| App
+    Reflection -.->|"reflects on"| LogicUtils
+
+    classDef code fill:#e3f2fd,stroke:#1565c0,color:#0d2a4d;
+    classDef test fill:#e8f5e9,stroke:#2e7d32,color:#14401a;
+    classDef docs fill:#fff8e1,stroke:#f9a825,color:#5b4300;
+    classDef actor fill:#f3e5f5,stroke:#6a1b9a,color:#3a0a52;
+
+    class App,LogicUtils code;
+    class Tests test;
+    class Readme,Reflection docs;
+    class User actor;

@@ -74,4 +74,42 @@ tests\test_game_logic.py ...................................................    
 
 ## 🚀 Stretch Features
 
-- [ ] [If you choose to complete Challenge 4, describe the Enhanced UI changes here — a screenshot is optional]
+### Challenge 1: Out-of-Range Guess Validation
+
+Guesses outside the active difficulty range are now rejected before they can
+affect the game, and the edge cases are covered by tests. All existing pytest
+tests still pass.
+
+- **Range validation** — a guess below the selected **low** value or above the
+  selected **high** value now shows an error message and is **not** counted as an
+  attempt (it doesn't increment the attempt counter or get added to history).
+- **Edge-case tests** — added pytest coverage for empty input, non-numeric input,
+  decimals (truncated toward zero), negative numbers, and very large values, plus
+  boundary checks confirming the low/high bounds are inclusive.
+
+**Files changed:**
+- **`logic_utils.py`** — added a `validate_in_range(guess, low, high)` helper that
+  returns `(ok, error_message)`.
+- **`app.py`** — wired the range check into the submit flow so out-of-range guesses
+  show an error and don't count as an attempt.
+- **`tests/test_game_logic.py`** — added the range-validation and edge-case tests.
+
+### Challenge 4: Enhanced Game UI
+
+All enhancements below are presentation-only and live in **`app.py`** — the core
+game logic (`logic_utils.py`) and game rules were left unchanged, and all pytest
+tests still pass.
+
+- **Metric cards** — a row of at-a-glance `st.metric` cards showing the selected
+  **Difficulty**, the active **Range**, **Attempts left**, and the current **Score**.
+- **Color-coded feedback** — the per-guess hint is now styled by outcome:
+  **Too High** uses a warning (amber) message, **Too Low** uses an info (blue)
+  message, and a **Win** uses a success (green) message.
+- **Hot / Warm / Cold proximity** — after a valid, in-range guess the app shows how
+  close the guess is to the secret: **🔥 Very Hot** within 5, **🌤️ Warm** within 15,
+  and **❄️ Cold** otherwise. It is intentionally *not* shown after invalid or
+  out-of-range guesses (those return before the proximity check).
+- **Guess history table** — previous guesses are listed in a clean `st.dataframe`,
+  displayed only once at least one valid guess has been made.
+
+The existing **Developer Debug Info** section was kept intact.

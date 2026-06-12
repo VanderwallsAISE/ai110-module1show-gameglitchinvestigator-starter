@@ -52,6 +52,14 @@ if "status" not in st.session_state:
 if "history" not in st.session_state:
     st.session_state.history = []
 
+# Challenge 4: at-a-glance metric cards (UI only — no game-logic changes).
+attempts_remaining = max(0, attempt_limit - st.session_state.attempts)
+m1, m2, m3, m4 = st.columns(4)
+m1.metric("Difficulty", difficulty)
+m2.metric("Range", f"{low}–{high}")
+m3.metric("Attempts left", attempts_remaining)
+m4.metric("Score", st.session_state.score)
+
 st.subheader("Make a guess")
 
 # Fix (e0335df): show the real difficulty range here — was hardcoded "between 1 and 100".
@@ -120,8 +128,27 @@ if submit:
 
         outcome, message = check_guess(guess_int, secret)
 
+        # Challenge 4: color-code the hint by outcome.
+        # Too High -> warning, Too Low -> info, Win -> success.
         if show_hint:
-            st.warning(message)
+            if outcome == "Win":
+                st.success(message)
+            elif outcome == "Too High":
+                st.warning(message)
+            else:  # "Too Low"
+                st.info(message)
+
+        # Challenge 4: Hot/Warm/Cold proximity feedback. Only reached on a
+        # valid, in-range guess (invalid/out-of-range guesses returned earlier).
+        # Skipped on a win, where the exact answer is already celebrated below.
+        if outcome != "Win":
+            distance = abs(guess_int - secret)
+            if distance <= 5:
+                st.markdown("### 🔥 Very Hot!")
+            elif distance <= 15:
+                st.markdown("### 🌤️ Warm")
+            else:
+                st.markdown("### ❄️ Cold")
 
         st.session_state.score = update_score(
             current_score=st.session_state.score,      
@@ -144,6 +171,15 @@ if submit:
                     f"The secret was {st.session_state.secret}. "
                     f"Score: {st.session_state.score}"
                 )
+
+# Challenge 4: clean guess-history table — only shown once a valid guess exists.
+if st.session_state.history:
+    st.subheader("Guess History")
+    history_rows = [
+        {"Guess #": number, "Value": value}
+        for number, value in enumerate(st.session_state.history, start=1)
+    ]
+    st.dataframe(history_rows, hide_index=True, use_container_width=True)
 
 st.divider()
 st.caption("Built by an AI that claims this code is production-ready.")

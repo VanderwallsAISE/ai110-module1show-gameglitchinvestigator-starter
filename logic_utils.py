@@ -5,6 +5,7 @@ def get_range_for_difficulty(difficulty: str):
     if difficulty == "Normal":
         return 1, 100
     if difficulty == "Hard":
+        # Fix (86377c7): Hard was 1-50 — smaller than Normal, so it was easier. Widened to 1-200.
         return 1, 200
     return 1, 100
 
@@ -44,6 +45,9 @@ def check_guess(guess, secret):
     if guess == secret:
         return "Win", "🎉 Correct!"
 
+    # Fix (b41f201): compare numerically only — old code coerced the secret to a
+    # string on alternating attempts, which silently broke comparisons.
+    # Fix (3c348db): hint direction was reversed (a too-high guess said "go higher").
     if guess > secret:
         return "Too High", "📉 GO LOWER!"
 

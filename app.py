@@ -31,14 +31,16 @@ attempt_limit = attempt_limit_map[difficulty]
 
 low, high = get_range_for_difficulty(difficulty)
 
-st.sidebar.caption(f"Range: {low} to {high}")             # FIXME: to show correct range based on difficulty
+st.sidebar.caption(f"Range: {low} to {high}")             
 st.sidebar.caption(f"Attempts allowed: {attempt_limit}")
 
 if "secret" not in st.session_state:
-    st.session_state.secret = random.randint(low, high)   # FIXME: secret should be generated based on the selected difficulty range, but it was always generating between 1 and 100 regardless of difficulty.
+    # Fix (3824ab6 / 4703d4a): seed the secret from the active difficulty range (was hardcoded 1-100).
+    st.session_state.secret = random.randint(low, high)   
 
 if "attempts" not in st.session_state:
-    st.session_state.attempts = 0                         # FIXME: attempts should start at 0 before the first guess.   It was starting at 1 which caused the first guess to be counted as an attempt before it was made.
+    # Fix (27f071d): start at 0 — was initialized to 1, eating an attempt before the first guess.
+    st.session_state.attempts = 0                         
 
 if "score" not in st.session_state:
     st.session_state.score = 0
@@ -51,6 +53,7 @@ if "history" not in st.session_state:
 
 st.subheader("Make a guess")
 
+# Fix (e0335df): show the real difficulty range here — was hardcoded "between 1 and 100".
 st.info(
     f"Guess a number between {low} and {high}. "
     f"Attempts left: {attempt_limit - st.session_state.attempts}"  
@@ -77,6 +80,7 @@ with col3:
     show_hint = st.checkbox("Show hint", value=True)
 
 if new_game:
+    # Fix (3824ab6): fully reset state — New Game used to leave score/status/history stale.
     st.session_state.attempts = 0
     st.session_state.secret = random.randint(low, high)  
     st.session_state.score = 0                           
@@ -98,9 +102,11 @@ if submit:
     if not ok:
         st.error(err)
     else:
+        # Fix (4703d4a): only count the attempt after a valid parse, and store the parsed int (not raw text).
         st.session_state.attempts += 1
         st.session_state.history.append(guess_int)
 
+        # Fix (b41f201): keep the secret as an int — removed the alternating str() coercion.
         secret = st.session_state.secret
 
         outcome, message = check_guess(guess_int, secret)

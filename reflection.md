@@ -15,7 +15,7 @@ The game loaded successfully and displayed a number guessing interface with diff
 
 The second bug was that the displayed range message always showed "Guess a number between 1 and 100" even after changing the difficulty level. The displayed range did not match the selected difficulty.
 
-As I continued testing the game, I found several additional issues. The attempts counter started one lower than expected when the app first loaded, the New Game button did not fully reset the game state, hint messages often pointed in the wrong direction, out-of-range guesses such as -1 and 1700 were accepted, the "Out of attempts!" message appeared while one attempt still remained, and the displayed score did not always match the score shown in the developer debug information.
+As I continued testing the game, I found several additional issues. The attempts counter started one lower than expected when the app first loaded, the New Game button did not fully reset the game state, hint messages often pointed in the wrong direction, out-of-range guesses such as -1 and 1700 were accepted, and the "Out of attempts!" message appeared while one attempt still remained.
 
 **Bug Reproduction Log**
 
@@ -30,7 +30,7 @@ Document at least 3 bugs you found. Add rows as needed.
 | Guess 3 when secret number is higher | Hint should say "Go Higher" | Hint logic sometimes points in the wrong direction | None |
 | Enter -1 or 1700 | Invalid guess should be rejected because it is outside the allowed range | Game accepts the value and processes it normally | None |
 | Reach final remaining attempt | Out-of-attempts message should appear only after all attempts are used | "Out of attempts!" message appears while one attempt is still remaining | None |
-| Lose game and compare score with Developer Debug Info | Displayed score should match debug score | Loss message score does not always match debug information | None |
+
 
 ---
 
@@ -40,16 +40,29 @@ Document at least 3 bugs you found. Add rows as needed.
 I used ChatGPT and Claude Code during this project. I primarily used AI to discuss bugs, improve my bug reports, understand the project requirements, and prepare my debugging plan. I still tested the application manually and verified the behavior myself before making any code changes.
 
 - Give one example of an AI suggestion that was correct (including what the AI suggested and how you verified the result).
+
+ChatGPT suggested moving the game logic functions from app.py into logic_utils.py. This was correct because it separated the UI from the game logic and made the code easier to test. I verified the result by importing the functions back into app.py, running the game, and confirming that it still worked correctly.
+
 - Give one example of an AI suggestion that was incorrect or misleading (including what the AI suggested and how you verified the result).
+
+One AI-generated explanation suggested that the bug in update_score() was caused by incorrect values being passed into the function. After tracing the variables manually, I found that current_score, outcome, and attempt_number were already being passed correctly. I verified this by reading the code flow and comparing the values shown in the Developer Debug Info section.
 
 ---
 
 ## 3. Debugging and testing your fixes
 
 - How did you decide whether a bug was really fixed?
+
+I considered a bug fixed only after testing it in the Streamlit application and confirming that the behavior matched the expected result. I also reviewed the code changes and compared them with the original bug description.
+
 - Describe at least one test you ran (manual or using pytest)  
   and what it showed you about your code.
+
+I ran the pytest suite after creating tests for the game logic. The tests verified things such as difficulty ranges, hint directions, win detection, and input parsing. The final result was 18 passing tests, which showed that the logic functions were behaving correctly.
+
 - Did AI help you design or understand any tests? How?
+
+Yes. AI helped generate a pytest suite that targeted the bugs I fixed. I reviewed the generated tests, fixed an import-path issue, and then used pytest to verify that all tests passed successfully.
 
 ---
 
@@ -57,11 +70,21 @@ I used ChatGPT and Claude Code during this project. I primarily used AI to discu
 
 - How would you explain Streamlit "reruns" and session state to a friend who has never used Streamlit?
 
+Streamlit reruns the entire script every time a user interacts with the app, such as clicking a button. Because of this, normal variables are recreated each time the app reruns. Session state acts like memory for the application and allows values such as the secret number, score, and attempts to persist between reruns. Without session state, the game would lose its progress every time the user submitted a guess.
+
 ---
 
 ## 5. Looking ahead: your developer habits
 
 - What is one habit or strategy from this project that you want to reuse in future labs or projects?
   - This could be a testing habit, a prompting strategy, or a way you used Git.
+
+One habit I want to reuse in future projects is verifying AI suggestions before accepting them. During this project, I found that some AI explanations were helpful while others were misleading. Reading the code, tracing the logic, and testing the behavior myself helped me avoid unnecessary changes and gave me a better understanding of how the application actually worked.
+
 - What is one thing you would do differently next time you work with AI on a coding task?
+
+Next time I would spend more time understanding the code before applying AI-generated fixes. I learned that AI can provide useful guidance, but I should verify each suggestion against the actual behavior of the application.
+
 - In one or two sentences, describe how this project changed the way you think about AI generated code.
+
+This project showed me that AI-generated code is not automatically correct. AI can help identify bugs, explain concepts, and generate tests, but developers still need to review the code, test it, and verify that the suggested fixes actually solve the problem.

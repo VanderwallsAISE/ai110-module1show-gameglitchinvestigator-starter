@@ -5,6 +5,7 @@ import streamlit as st
 from logic_utils import (
     get_range_for_difficulty,
     parse_guess,
+    validate_in_range,
     check_guess,
     update_score
 )
@@ -99,8 +100,16 @@ if st.session_state.status != "playing":
 if submit:
     
     ok, guess_int, err = parse_guess(raw_guess)
+    in_range, range_err = (False, None)
+    if ok:
+        # Challenge 1: reject guesses outside the active difficulty range.
+        in_range, range_err = validate_in_range(guess_int, low, high)
+
     if not ok:
         st.error(err)
+    elif not in_range:
+        # Out-of-range guess: show an error and do NOT count it as an attempt.
+        st.error(range_err)
     else:
         # Fix (4703d4a): only count the attempt after a valid parse, and store the parsed int (not raw text).
         st.session_state.attempts += 1

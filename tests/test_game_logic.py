@@ -16,9 +16,12 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+import pytest
+
 from logic_utils import (
     get_range_for_difficulty,
     parse_guess,
+    validate_in_range,
     check_guess,
 )
 
@@ -176,3 +179,132 @@ def test_parse_guess_returns_int_not_raw_string():
     ok, value, _ = parse_guess("7")
     assert ok is True
     assert isinstance(value, int)
+
+
+# ---------------------------------------------------------------------------
+# CHALLENGE 1: Out-of-range validation
+# A guess below the selected low value or above the selected high value must
+# be rejected with an error so app.py can show it and skip counting the
+# attempt. validate_in_range(guess, low, high) returns (ok, error_message).
+# ---------------------------------------------------------------------------
+
+def test_in_range_guess_is_accepted():
+    ok, err = validate_in_range(50, 1, 100)
+    assert ok is True
+    assert err is None
+
+
+def test_guess_below_low_is_rejected():
+    ok, err = validate_in_range(0, 1, 100)
+    assert ok is False
+    assert err
+
+
+def test_guess_above_high_is_rejected():
+    ok, err = validate_in_range(101, 1, 100)
+    assert ok is False
+    assert err
+
+
+def test_low_boundary_is_inclusive():
+    # The low bound itself is a valid guess.
+    ok, err = validate_in_range(1, 1, 100)
+    assert ok is True
+    assert err is None
+
+
+def test_high_boundary_is_inclusive():
+    # The high bound itself is a valid guess.
+    ok, err = validate_in_range(100, 1, 100)
+    assert ok is True
+    assert err is None
+
+
+def test_negative_guess_is_rejected_when_range_is_positive():
+    ok, err = validate_in_range(-5, 1, 20)
+    assert ok is False
+    assert err
+
+
+def test_very_large_guess_is_rejected():
+    ok, err = validate_in_range(10_000_000, 1, 200)
+    assert ok is False
+    assert err
+
+
+@pytest.mark.parametrize("guess", [-1000, -1, 0, 201, 1000, 999_999_999])
+def test_out_of_range_guesses_are_all_rejected(guess):
+    ok, err = validate_in_range(guess, 1, 200)
+    assert ok is False
+    assert err
+
+
+@pytest.mark.parametrize("guess", [1, 2, 100, 199, 200])
+def test_in_range_guesses_are_all_accepted(guess):
+    ok, err = validate_in_range(guess, 1, 200)
+    assert ok is True
+    assert err is None
+
+
+# ---------------------------------------------------------------------------
+# CHALLENGE 1 (cont.): parse_guess edge cases
+# Empty input, non-numeric input, decimals, negative numbers, and very large
+# values must all be handled without crashing.
+# ---------------------------------------------------------------------------
+
+def test_parse_guess_rejects_whitespace_as_non_numeric():
+    ok, value, err = parse_guess("   ")
+    assert ok is False
+    assert value is None
+    assert err
+
+
+@pytest.mark.parametrize("raw", ["abc", "12abc", "$10", "one", "5,000", "1e5x"])
+def test_parse_guess_rejects_various_non_numeric_input(raw):
+    ok, value, err = parse_guess(raw)
+    assert ok is False
+    assert value is None
+    assert err
+
+
+def test_parse_guess_accepts_negative_integer():
+    ok, value, err = parse_guess("-7")
+    assert ok is True
+    assert value == -7
+    assert err is None
+
+
+def test_parse_guess_truncates_negative_decimal_toward_zero():
+    # int(float("-3.9")) == -3 (truncation toward zero, not floor).
+    ok, value, err = parse_guess("-3.9")
+    assert ok is True
+    assert value == -3
+    assert err is None
+
+
+@pytest.mark.parametrize(
+    "raw, expected",
+    [("0.0", 0), ("3.14", 3), ("99.999", 99), ("-0.5", 0)],
+)
+def test_parse_guess_truncates_decimals(raw, expected):
+    ok, value, err = parse_guess(raw)
+    assert ok is True
+    assert value == expected
+    assert err is None
+
+
+def test_parse_guess_accepts_very_large_value():
+    ok, value, err = parse_guess("100000000000000000000")
+    assert ok is True
+    assert value == 100000000000000000000
+    assert err is None
+
+
+def test_parse_then_validate_rejects_large_value_without_counting():
+    # End-to-end of the Challenge 1 flow: a huge but numeric guess parses
+    # fine, then fails the range check (so app.py won't count the attempt).
+    ok, value, err = parse_guess("1000000")
+    assert ok is True
+    in_range, range_err = validate_in_range(value, 1, 200)
+    assert in_range is False
+    assert range_err

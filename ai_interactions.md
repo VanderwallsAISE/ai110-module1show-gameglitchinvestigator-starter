@@ -28,9 +28,11 @@
 
 | Edge Case | Prompt Used | AI-Suggested Test | Did It Pass? | Your Reasoning |
 |-----------|-------------|-------------------|--------------|----------------|
-| | | | | |
-| | | | | |
-| | | | | |
+| Negative numbers | Complete Challenge 1 by adding edge-case pytest tests for invalid and out-of-range guesses. | Test that guesses below the selected range are rejected by `validate_in_range()`. | Yes | Negative numbers like `-1` should not be accepted because the game ranges start at 1. |
+| Decimals | Complete Challenge 1 by adding edge-case pytest tests for decimals and unusual numeric input. | Test that decimal strings are parsed consistently by `parse_guess()`. | Yes | Decimal input could behave unexpectedly, so I wanted to verify how the parser handles it. |
+| Extremely large values | Complete Challenge 1 by adding edge-case pytest tests for very large guesses. | Test that huge numeric guesses parse but fail range validation. | Yes | Large numbers should not break the game or count as valid guesses outside the selected range. |
+| Empty input | Complete Challenge 1 by adding edge-case pytest tests for missing input. | Test that an empty string returns an error from `parse_guess()`. | Yes | A blank guess should show an error instead of counting as an attempt. |
+| Non-numeric input | Complete Challenge 1 by adding edge-case pytest tests for text input. | Test that values like `"abc"` are rejected by `parse_guess()`. | Yes | Text input should not crash the game or count as a valid guess. |
 
 ---
 

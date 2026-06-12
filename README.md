@@ -56,6 +56,22 @@ tests\test_game_logic.py ..................                                     
 ====================================================================================================== 18 passed in 0.05s =======================================================================================================
 ```
 
+## 🧪 Test Results
+
+```text
+========================================================================== test session starts ============================                              
+platform win32 -- Python 3.14.2, pytest-9.0.3, pluggy-1.6.0
+rootdir: C:\Users\istea\Desktop\Code_path\CODE_PATH COURSE SUMMER 2026\AI110 FOUNDATIONS OF ENGINEERING\Code_Path AI110 __Project\ai110-module1show-gameglitchinvestigator-starter
+plugins: anyio-4.13.0
+collected 51 items
+
+tests\test_game_logic.py ...................................................                                                                                        [100%]
+
+================================================== 51 passed in 0.09s=============================================== 
+```
+
+
+
 ## 🚀 Stretch Features
 
 - [ ] [If you choose to complete Challenge 4, describe the Enhanced UI changes here — a screenshot is optional]

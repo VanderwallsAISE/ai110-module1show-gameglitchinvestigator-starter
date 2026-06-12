@@ -34,6 +34,25 @@ def parse_guess(raw: str):
     return True, value, None
 
 
+def validate_in_range(guess: int, low: int, high: int):
+    """
+    Challenge 1: check that a parsed guess falls within the inclusive
+    [low, high] range for the selected difficulty.
+
+    Returns: (ok: bool, error_message: str | None)
+
+    An out-of-range guess is rejected so the caller can show an error and
+    skip counting it as an attempt.
+    """
+    if guess < low:
+        return False, f"Too low — pick a number between {low} and {high}."
+
+    if guess > high:
+        return False, f"Too high — pick a number between {low} and {high}."
+
+    return True, None
+
+
 def check_guess(guess, secret):
     """
     Compare guess to secret and return (outcome, message).

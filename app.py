@@ -101,10 +101,7 @@ if submit:
         st.session_state.attempts += 1
         st.session_state.history.append(guess_int)
 
-        if st.session_state.attempts % 2 == 0: # FIXME: This is a glitch that causes the game to treat the secret as a string every other attempt, which can lead to unexpected behavior when comparing guesses to the secret. The secret should always be treated as an integer for consistency.
-            secret = str(st.session_state.secret)
-        else:
-            secret = st.session_state.secret
+        secret = st.session_state.secret
 
         outcome, message = check_guess(guess_int, secret)
 
@@ -125,7 +122,7 @@ if submit:
                 f"Final score: {st.session_state.score}"
             )
         else:
-            if st.session_state.attempts > attempt_limit: 
+            if st.session_state.attempts > attempt_limit: # 
                 st.session_state.status = "lost"
                 st.error(
                     f"Out of attempts! "

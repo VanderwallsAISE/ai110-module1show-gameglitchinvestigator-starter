@@ -25,19 +25,20 @@ It wrote the code, ran away, and now the game is unplayable.
 
 ## 📝 Document Your Experience
 
-- [ ] Describe the game's purpose.
-- [ ] Detail which bugs you found.
-- [ ] Explain what fixes you applied.
-
+- [x] Describe the game's purpose.
+- [x] Detail which bugs you found.
+- [x] Explain what fixes you applied.
 ## 📸 Demo Walkthrough
 
 Describe your fixed game in numbered steps so a reader can follow along without watching a video:
 
-1. <!-- Describe this step -->
-2. <!-- Describe this step -->
-3. <!-- Describe this step -->
-4. <!-- Describe this step -->
-5. <!-- Add more steps as needed -->
+1. The user opens the Streamlit app and selects a difficulty level from the sidebar.
+2. The app displays the correct number range and attempts allowed for the selected difficulty.
+3. The user enters a guess and clicks **Submit Guess**.
+4. If the guess is too high, the game tells the user to go lower; if the guess is too low, it tells the user to go higher.
+5. If the user enters invalid input, the app shows an error message without counting it as a valid guess.
+6. When the user guesses the secret number, the game displays a win message with the final score.
+7. The user can click **New Game** to reset the secret number, attempts, score, status, and guess history.
 
 **Screenshot** *(optional)*: <!-- Insert a screenshot of your fixed, winning game here -->
 
